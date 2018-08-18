@@ -7,22 +7,29 @@ def get_original_image(path):
     return Image.open(r"{}".format(path))
 
 
-def get_new_size(orig_prop, orig_size, new_size):
-    width, height, scale = new_size
-    if width and not height and not scale:
-        height = int(width / orig_prop)
-    elif not width and height and not scale:
-        width = int(orig_prop * height)
-    elif scale:
-        orig_width, orig_height = orig_size
-        width, height = int(orig_width*scale), int(orig_height*scale)
-    new_prop = round(width/height, 1)
+def check_same_proportion(orig_prop, new_prop):
     if orig_prop != new_prop:
         answer = input("""New proportion {} is not like original {}\n
         Do You want to proceed (Y/N): """.format(new_prop,orig_prop)).upper()
         if answer != 'Y':
             exit("Bye")
-    return (width, height)
+    return True
+
+
+def get_new_size(orig_size, new_size):
+    orig_width, orig_height = orig_size
+    orig_prop = round(orig_width/orig_height,1)
+    width, height, scale = new_size
+
+    if width and not height and not scale:
+        height = int(width / orig_prop)
+    elif not width and height and not scale:
+        width = int(orig_prop * height)
+    elif scale:
+        width, height = int(orig_width*scale), int(orig_height*scale)
+    new_prop = round(width/height, 1)
+    if check_same_proportion(orig_prop, new_prop):
+        return (width, height)
 
 
 def get_scaled_image(image, new_size):
@@ -37,10 +44,16 @@ def get_arguments():
     parser.add_argument("-height", type=int, dest="height")
     parser.add_argument("-scale", type=float, dest="scale")
     args = parser.parse_args()
-    return [args.image_path,args.dest_dir,args.width,args.height,args.scale]
+    return {
+        "image_path":args.image_path,
+        "dest_dir":args.dest_dir,
+        "width":args.width,
+        "height":args.height,
+        "scale":args.scale,
+    }
 
 
-def save_image(image,image_dir, name):
+def save_image(image, image_dir, name):
     image_path = os.path.join(image_dir,name)
     if os.path.exists(image_path):
         answer = input(
@@ -58,33 +71,27 @@ Do you want to overwrite it?(Y/N):
         os.mkdir(image_dir)
         image.save(image_path)
     print("Saved")
-    
-    
-def main(args = None):
-    [image_path,
-    dest_dir,
-    new_width,
-    new_height,
-    new_scale] = get_arguments() if not args else args
-    image_path = os.path.abspath(image_path)
-    
+
+
+def main(image_args = None):
+    args = get_arguments() if not image_args else image_args
+    image_path = os.path.abspath(args["image_path"])
+
     try:
         orig_image = get_original_image(image_path)
     except FileNotFoundError:
         exit("File not found")
-        
-    orig_dir = os.path.dirname(os.path.abspath(image_path))
+
+    orig_dir = os.path.dirname(image_path)
     orig_name = os.path.basename(image_path).split(".")[0]
     orig_ext = {"JPEG":".jpg","PNG":".png"}[orig_image.format]
     orig_width, orig_height = orig_image.size
-    orig_proportion = round(orig_width/orig_height,1)
-    dest_dir = os.path.abspath(dest_dir) if dest_dir else orig_dir
+    dest_dir = os.path.abspath(args["dest_dir"]) if args["dest_dir"] else orig_dir
 
     new_size = get_new_size(
-        orig_proportion,
         orig_image.size,
-        (new_width, new_height, new_scale),
-        )
+        (args["width"],args["height"],args["scale"]),
+    )
     new_image = get_scaled_image(orig_image, new_size)
 
     if dest_dir is orig_dir:
@@ -92,10 +99,18 @@ def main(args = None):
         new_name = "{}_{}x{}{}".format(orig_name,width,height,orig_ext)
     else:
         new_name = orig_name + orig_ext
-        
+
     save_image(new_image,dest_dir,new_name)
 
 
 if __name__ == "__main__":
+    """
+    args = {
+        "image_path":"./River_Bank.jpg",
+        "dest_dir":None,
+        "width":None,
+        "height":None,
+        "scale":0.5,
+    }
+    """
     main()
-
