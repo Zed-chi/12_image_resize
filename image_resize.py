@@ -38,11 +38,11 @@ def get_scaled_image(image, new_size):
 
 def get_arguments():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-image_path", required=True, dest="image_path")
-    parser.add_argument("-dest_dir", default=None, dest="dest_dir")
-    parser.add_argument("-width", type=int, dest="width")
-    parser.add_argument("-height", type=int, dest="height")
-    parser.add_argument("-scale", type=float, dest="scale")
+    parser.add_argument("-i", required=True, dest="image_path")
+    parser.add_argument("-d", default=None, dest="dest_dir")
+    parser.add_argument("-w", type=int, dest="width")
+    parser.add_argument("-h", type=int, dest="height")
+    parser.add_argument("-s", type=float, dest="scale")
     args = parser.parse_args()
     return {
         "image_path":args.image_path,
