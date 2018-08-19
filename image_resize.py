@@ -11,7 +11,7 @@ def check_same_proportion(orig_prop, new_prop):
     if orig_prop != new_prop:
         answer = input("""New proportion {} is not like original {}\n
         Do You want to proceed (Y/N): """.format(new_prop,orig_prop)).upper()
-        if answer != 'Y':
+        if answer != "Y"quotes :
             exit("Bye")
     return True
 
