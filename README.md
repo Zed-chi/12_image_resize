@@ -4,7 +4,7 @@ Script resizes provided image
 
 ## Usage
 ```bash
-$ python image_resizer.py -i <path_to_image> -d <destination_dir> -w <width> -h <height> -s <scale>
+$ python image_resizer.py -i <path_to_image> -d <destination_dir> -w <width> -ht <height> -s <scale>
 ```
 * path_to_image and one of three size attributes is required
 
