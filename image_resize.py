@@ -11,7 +11,7 @@ def check_same_proportion(orig_prop, new_prop):
     if orig_prop != new_prop:
         answer = input("""New proportion {} is not like original {}\n
         Do You want to proceed (Y/N): """.format(new_prop,orig_prop)).upper()
-        if answer != "Y"quotes :
+        if answer != "Y":
             exit("Bye")
     return True
 
@@ -104,13 +104,4 @@ def main(image_args = None):
 
 
 if __name__ == "__main__":
-    """
-    args = {
-        "image_path":"./River_Bank.jpg",
-        "dest_dir":None,
-        "width":None,
-        "height":None,
-        "scale":0.5,
-    }
-    """
     main()
