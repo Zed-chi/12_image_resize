@@ -15,7 +15,7 @@ def check_same_proportion(orig_prop, new_prop):
         answer = input("""New proportion {} is not like original {}\n
         Do You want to proceed (Y/N): """.format(new_prop, orig_prop)).upper()
         if answer != "Y":
-            exit("Bye")
+            return None
     return True
 
 
@@ -32,7 +32,9 @@ def get_new_size(orig_size, new_size):
         width, height = int(orig_width*scale), int(orig_height*scale)
     new_prop = round(width/height, 1)
     if check_same_proportion(orig_prop, new_prop):
-        return (width, height)
+        return width, height
+    else:
+        return None
 
 
 def get_scaled_image(image, new_size):
@@ -102,6 +104,8 @@ def main(image_args=None):
         orig_image.size,
         (args["width"], args["height"], args["scale"]),
     )
+    if not new_size:
+        exit("Wrong proportion")
     new_image = get_scaled_image(orig_image, new_size)
 
     if dest_dir is orig_dir:
