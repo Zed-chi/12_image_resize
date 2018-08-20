@@ -64,8 +64,8 @@ def get_arguments():
     }
 
 
-def save_image(image, image_dir, name):
-    image_path = os.path.join(image_dir, name)
+def save_image(image, image_dir, image_name):
+    image_path = os.path.join(image_dir, image_name)
     if os.path.exists(image_path):
         answer = input(
             """File exists.
