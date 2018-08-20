@@ -64,20 +64,18 @@ def save_image(image, image_dir, image_name):
     image_path = os.path.join(image_dir, image_name)
     if os.path.exists(image_path):
         answer = input(
-            """File exists.
-Do you want to overwrite it?(Y/N):
-            """
+            "File exists.\n"
+            "Do you want to overwrite it?(Y/N):"
             ).upper()
         if answer != "Y":
-            exit("Bye")
+            return None
     try:
         image.save(image_path)
     except FileNotFoundError:
-        print("Directory {} not found, but created.\n".
-              format(image_dir))
+        print("Directory {} not found, but created.\n".format(image_dir))
         os.mkdir(image_dir)
         image.save(image_path)
-    print("Saved")
+    return True
 
 
 def main(image_args=None):
@@ -109,7 +107,10 @@ def main(image_args=None):
         new_name = "{}_{}x{}{}".format(orig_name, width, height, orig_ext)
     else:
         new_name = orig_name + orig_ext
-    save_image(new_image, dest_dir, new_name)
+    if save_image(new_image, dest_dir, new_name):
+        print("Saved")
+    else:
+        exit("File exists")
 
 
 if __name__ == "__main__":
