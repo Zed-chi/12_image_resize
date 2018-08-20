@@ -10,7 +10,7 @@ def get_original_image(path):
         return None
 
 
-def check_same_proportion(orig_prop, new_prop):
+def check_same_aspect_ratio(orig_prop, new_prop):
     if orig_prop != new_prop:
         answer = input("""New proportion {} is not like original {}\n
         Do You want to proceed (Y/N): """.format(new_prop, orig_prop)).upper()
@@ -19,22 +19,18 @@ def check_same_proportion(orig_prop, new_prop):
     return True
 
 
-def get_new_size(orig_size, new_size):
-    orig_width, orig_height = orig_size
+def get_new_size(orig_width, orig_height, width, height, scale):
     orig_prop = round(orig_width/orig_height, 1)
-    width, height, scale = new_size
-
     if width and not height and not scale:
         height = int(width / orig_prop)
     elif not width and height and not scale:
         width = int(orig_prop * height)
     elif scale:
-        width, height = int(orig_width*scale), int(orig_height*scale)
+        width, height = int(orig_width * scale), int(orig_height * scale)
     new_prop = round(width/height, 1)
-    if check_same_proportion(orig_prop, new_prop):
-        return width, height
-    else:
+    if not check_same_aspect_ratio(orig_prop, new_prop):
         return None
+    return width, height
 
 
 def get_scaled_image(image, new_size):
@@ -78,36 +74,42 @@ def save_image(image, image_dir, image_name):
     return True
 
 
+def get_new_name(dest_dir, orig_name, width, height, orig_ext):
+    if not dest_dir:
+        return "{}_{}x{}{}".format(orig_name, width, height, orig_ext)
+    else:
+        return orig_name + orig_ext
+
+
+def get_output_dir(dest_dir, image_path):
+    if dest_dir:
+        return os.path.abspath(dest_dir)
+    else:
+        return os.path.dirname(image_path)
+
+
 def main(image_args=None):
-    args = get_arguments()
-    if not args:
-        exit("No size arguments")
+    args = get_arguments() or exit("No size arguments")
     image_path = os.path.abspath(args.image_path)
-    orig_image = get_original_image(image_path)
-    if not orig_image:
-        exit("File not found")
-    orig_dir = os.path.dirname(image_path)
+    orig_image = get_original_image(image_path) or exit("File not found")
     orig_name = os.path.basename(image_path).split(".")[0]
     orig_ext = {"JPEG": ".jpg", "PNG": ".png"}[orig_image.format]
     orig_width, orig_height = orig_image.size
-    if args.dest_dir:
-        dest_dir = os.path.abspath(args.dest_dir)
-    else:
-        dest_dir = orig_dir
+    output_dir = get_output_dir(args.dest_dir, image_path)
     new_size = get_new_size(
-        orig_image.size,
-        (args.width, args.height, args.scale),
-    )
-    if not new_size:
-        exit("Wrong proportion")
+        *orig_image.size,
+        args.width,
+        args.height,
+        args.scale,
+    ) or exit("Wrong aspect_ratio")
     new_image = get_scaled_image(orig_image, new_size)
-
-    if dest_dir is orig_dir:
-        width, height = new_size
-        new_name = "{}_{}x{}{}".format(orig_name, width, height, orig_ext)
-    else:
-        new_name = orig_name + orig_ext
-    if save_image(new_image, dest_dir, new_name):
+    new_name = get_new_name(
+        args.dest_dir,
+        orig_name,
+        *new_size,
+        orig_ext,
+    )
+    if save_image(new_image, output_dir, new_name):
         print("Saved")
     else:
         exit("File exists")
