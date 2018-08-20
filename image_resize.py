@@ -56,14 +56,8 @@ def get_arguments():
     parser.add_argument("-s", type=float, dest="scale")
     args = parser.parse_args()
     if not args.width and not args.height and not args.scale:
-        exit("No size arguments")
-    return {
-        "image_path": args.image_path,
-        "dest_dir": args.dest_dir,
-        "width": args.width,
-        "height": args.height,
-        "scale": args.scale,
-    }
+        return None
+    return args
 
 
 def save_image(image, image_dir, image_name):
@@ -87,8 +81,10 @@ Do you want to overwrite it?(Y/N):
 
 
 def main(image_args=None):
-    args = get_arguments() if not image_args else image_args
-    image_path = os.path.abspath(args["image_path"])
+    args = get_arguments()
+    if not args:
+        exit("No size arguments")
+    image_path = os.path.abspath(args.image_path)
     orig_image = get_original_image(image_path)
     if not orig_image:
         exit("File not found")
@@ -96,13 +92,13 @@ def main(image_args=None):
     orig_name = os.path.basename(image_path).split(".")[0]
     orig_ext = {"JPEG": ".jpg", "PNG": ".png"}[orig_image.format]
     orig_width, orig_height = orig_image.size
-    if args["dest_dir"]:
-        dest_dir = os.path.abspath(args["dest_dir"])
+    if args.dest_dir:
+        dest_dir = os.path.abspath(args.dest_dir)
     else:
         dest_dir = orig_dir
     new_size = get_new_size(
         orig_image.size,
-        (args["width"], args["height"], args["scale"]),
+        (args.width, args.height, args.scale),
     )
     if not new_size:
         exit("Wrong proportion")
