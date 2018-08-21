@@ -5,7 +5,7 @@ import os
 
 def get_original_image(path):
     try:
-        return Image.open(r"{}".format(path))
+        return Image.open(path)
     except OSError:
         return None
 
