@@ -10,25 +10,35 @@ def get_original_image(path):
         return None
 
 
-def check_same_aspect_ratio(w,h, new_w,new_h):
+def is_args_valid(args):
+    if scale and scale < 0:
+        return None
+    if width and width < 10:
+        return None
+    if height and height < 10:
+        return None
+    return True
+
+
+def check_same_aspect_ratio(width, height, new_width, new_height):
     orig_ratio = round(width/height, 1)
     new_ratio = round(new_width/new_height, 1)
     if orig_ratio != new_ratio:
         answer = input("""New proportion {} is not like original {}\n
-        Do You want to proceed (Y/N): """.format(new_ratio, orig_ratio)).upper()
+        Do You want to proceed (Y/N):""".format(new_ratio, orig_ratio)).upper()
         if answer != "Y":
             return False
     return True
 
 
 def get_new_size(orig_width, orig_height, width, height, scale):
-    orig_prop = round(orig_width/orig_height, 1)
+    orig_prop = round(orig_width / orig_height, 1)
     if width and not height and not scale:
         height = int(width / orig_prop)
     elif not width and height and not scale:
         width = int(orig_prop * height)
     elif scale:
-        width, height = int(orig_width * scale), int(orig_height * scale)    
+        width, height = int(orig_width * scale), int(orig_height * scale)
     return width, height
 
 
@@ -51,20 +61,11 @@ def get_arguments():
 
 def save_image(image, image_dir, image_name):
     image_path = os.path.join(image_dir, image_name)
-    if os.path.exists(image_path):
-        answer = input(
-            "File exists.\n"
-            "Do you want to overwrite it?(Y/N):"
-            ).upper()
-        if answer != "Y":
-            return None
     try:
         image.save(image_path)
+        return True
     except FileNotFoundError:
-        print("Directory {} not found, but created.\n".format(image_dir))
-        os.mkdir(image_dir)
-        image.save(image_path)
-    return True
+        return False
 
 
 def get_new_name(dest_dir, orig_name, width, height, orig_ext):
@@ -83,10 +84,13 @@ def get_output_dir(dest_dir, image_path):
 
 def main(image_args=None):
     args = get_arguments() or exit("No size arguments")
+    if not args:
+        exit("args not valid")
     image_path = os.path.abspath(args.image_path)
     orig_image = get_original_image(image_path) or exit("File not found")
-    orig_name = os.path.basename(image_path).split(".")[0]
-    orig_ext = {"JPEG": ".jpg", "PNG": ".png"}[orig_image.format]
+    orig_name_ext = os.path.basename(image_path)
+    orig_name = os.path.splitext(orig_name_ext)[0]
+    orig_ext = os.path.splitext(orig_name_ext)[1]
     orig_width, orig_height = orig_image.size
     output_dir = get_output_dir(args.dest_dir, image_path)
     new_size = get_new_size(
@@ -104,10 +108,12 @@ def main(image_args=None):
         *new_size,
         orig_ext,
     )
+    if os.path.exists(os.path.join(output_dir, new_name)):
+        exit("File exist")
     if save_image(new_image, output_dir, new_name):
         print("Saved")
     else:
-        exit("File exists")
+        print("Directory not found")
 
 
 if __name__ == "__main__":
