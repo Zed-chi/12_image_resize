@@ -1,4 +1,4 @@
-from PIL import Image, ImageOps
+from PIL import Image
 import argparse
 import os
 
@@ -33,13 +33,7 @@ def get_new_size(orig_width, orig_height, width, height, scale):
 
 
 def get_scaled_image(image, new_size):
-    return ImageOps.fit(
-        image,
-        new_size,
-        method=0,
-        bleed=0.0,
-        centering=(0.5, 0.5),
-    )
+    return image.resize(new_size, resample=0)
 
 
 def get_arguments():
