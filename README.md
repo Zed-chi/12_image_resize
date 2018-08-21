@@ -9,14 +9,14 @@ Script resizes provided image.
 ## Usage
 * Install requirement modules:
 ```bash
-$ pip instal -r requirements.txt
+$ pip install -r requirements.txt
 ```
 * Run
 ```bash
 $ python image_resizer.py -i <path_to_source_image> -d <output_dir> -w <width> -ht <height> -s <scale>
 ```
 
-* path_to_image and one of three size attributes is **required**
+ path_to_image and one of three size attributes is **required**
 
 ### Project Goals
 
