@@ -10,10 +10,12 @@ def get_original_image(path):
         return None
 
 
-def check_same_aspect_ratio(orig_prop, new_prop):
-    if orig_prop != new_prop:
+def check_same_aspect_ratio(w,h, new_w,new_h):
+    orig_ratio = round(width/height, 1)
+    new_ratio = round(new_width/new_height, 1)
+    if orig_ratio != new_ratio:
         answer = input("""New proportion {} is not like original {}\n
-        Do You want to proceed (Y/N): """.format(new_prop, orig_prop)).upper()
+        Do You want to proceed (Y/N): """.format(new_ratio, orig_ratio)).upper()
         if answer != "Y":
             return False
     return True
@@ -99,6 +101,8 @@ def main(image_args=None):
         args.height,
         args.scale,
     ) or exit("Wrong aspect_ratio")
+    if not check_same_aspect_ratio(*orig_image.size, *new_size):
+        exit("wrong aspect ratio")
     new_image = get_scaled_image(orig_image, new_size)
     new_name = get_new_name(
         args.dest_dir,
