@@ -15,7 +15,7 @@ def check_same_aspect_ratio(orig_prop, new_prop):
         answer = input("""New proportion {} is not like original {}\n
         Do You want to proceed (Y/N): """.format(new_prop, orig_prop)).upper()
         if answer != "Y":
-            return None
+            return False
     return True
 
 
@@ -26,10 +26,7 @@ def get_new_size(orig_width, orig_height, width, height, scale):
     elif not width and height and not scale:
         width = int(orig_prop * height)
     elif scale:
-        width, height = int(orig_width * scale), int(orig_height * scale)
-    new_prop = round(width/height, 1)
-    if not check_same_aspect_ratio(orig_prop, new_prop):
-        return None
+        width, height = int(orig_width * scale), int(orig_height * scale)    
     return width, height
 
 
