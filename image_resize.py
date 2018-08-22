@@ -46,7 +46,7 @@ def get_new_size(orig_width, orig_height, width, height, scale):
     return width, height
 
 
-def get_scaled_image(image, new_size):
+def get_resized_image(image, new_size):
     return image.resize(new_size, resample=0)
 
 
@@ -103,7 +103,7 @@ def main(image_args=None):
     ) or exit("Wrong aspect_ratio")
     if not check_same_aspect_ratio(*orig_image.size, *new_size):
         exit("wrong aspect ratio")
-    new_image = get_scaled_image(orig_image, new_size)
+    new_image = get_resized_image(orig_image, new_size)
     new_name = get_new_name(
         args.dest_dir,
         orig_name,
