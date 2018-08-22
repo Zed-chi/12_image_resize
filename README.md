@@ -2,7 +2,7 @@
 ***
 Script resizes provided image.
 - you can choose certain width/height or just scale of output image.
-(if you specify both scale and width/height, width/height **will not be used** )
+(if you specify both scale and width/height **it will cause error** )
 - you can choose output dir or leave it blank.
 (script will save output image in source dir and name it as <original_name_widthXheight> )
 
