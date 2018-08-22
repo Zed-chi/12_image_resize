@@ -17,9 +17,9 @@ def is_args_valid(args):
         return False
     if args.height and args.height < 0:
         return False
-	if args.scale and (args.width or args.height):
-		return False
-	if not args.width and not args.height and not args.scale:
+    if args.scale and (args.width or args.height):
+        return False
+    if not args.width and not args.height and not args.scale:
         return False
     return True
 
@@ -104,9 +104,9 @@ def main(image_args=None):
     new_image = get_resized_image(orig_image, new_size)
     if not dest_dir:
         orig_name = "{0}_{2}x{3}{1}".format(
-		*os.path.splitext(orig_name),
-		*new_size, 
-	)
+            *os.path.splitext(orig_name),
+            *new_size,
+        )
     if os.path.exists(os.path.join(output_dir, orig_name)):
         exit("File exist")
     if save_image(new_image, output_dir, orig_name):
