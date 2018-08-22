@@ -78,7 +78,7 @@ def get_new_name(dest_dir, orig_name, width, height, orig_ext):
 
 
 def get_output_dir(dest_dir, image_path):
-    if dest_dir:
+    if dest_dir and os.path.isdir(dest_dir):
         return os.path.abspath(dest_dir)
     else:
         return os.path.dirname(image_path)
