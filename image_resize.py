@@ -11,12 +11,16 @@ def get_original_image(path):
 
 
 def is_args_valid(args):
-    if scale and scale < 0:
-        return None
-    if width and width < 10:
-        return None
-    if height and height < 10:
-        return None
+    if args.scale and args.scale < 0:
+        return False
+    if args.width and args.width < 0:
+        return False
+    if args.height and args.height < 0:
+        return False
+	if args.scale and (args.width or args.height):
+		return False
+	if not args.width and not args.height and not args.scale:
+        return False
     return True
 
 
@@ -54,8 +58,6 @@ def get_arguments():
     parser.add_argument("-ht", type=int, dest="height")
     parser.add_argument("-s", type=float, dest="scale")
     args = parser.parse_args()
-    if not args.width and not args.height and not args.scale:
-        return None
     return args
 
 
@@ -84,7 +86,7 @@ def get_output_dir(dest_dir, image_path):
 
 def main(image_args=None):
     args = get_arguments() or exit("No size arguments")
-    if not args:
+    if is_args_valid(args):
         exit("args not valid")
     image_path = os.path.abspath(args.image_path)
     orig_image = get_original_image(image_path) or exit("File not found")
