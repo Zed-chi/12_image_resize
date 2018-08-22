@@ -90,9 +90,7 @@ def main(image_args=None):
         exit("args not valid")
     image_path = os.path.abspath(args.image_path)
     orig_image = get_original_image(image_path) or exit("File not found")
-    orig_name_ext = os.path.basename(image_path)
-    orig_name = os.path.splitext(orig_name_ext)[0]
-    orig_ext = os.path.splitext(orig_name_ext)[1]
+    orig_name = os.path.basename(image_path)
     orig_width, orig_height = orig_image.size
     output_dir = get_output_dir(args.dest_dir, image_path)
     new_size = get_new_size(
@@ -104,15 +102,14 @@ def main(image_args=None):
     if not check_same_aspect_ratio(*orig_image.size, *new_size):
         exit("wrong aspect ratio")
     new_image = get_resized_image(orig_image, new_size)
-    new_name = get_new_name(
-        args.dest_dir,
-        orig_name,
-        *new_size,
-        orig_ext,
-    )
-    if os.path.exists(os.path.join(output_dir, new_name)):
+    if not dest_dir:
+        orig_name = "{0}_{2}x{3}{1}".format(
+		*os.path.splitext(orig_name),
+		*new_size, 
+	)
+    if os.path.exists(os.path.join(output_dir, orig_name)):
         exit("File exist")
-    if save_image(new_image, output_dir, new_name):
+    if save_image(new_image, output_dir, orig_name):
         print("Saved")
     else:
         print("Directory not found")
